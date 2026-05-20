@@ -1,0 +1,26 @@
+[project]
+name = "fgc-inspect"
+version = "0.1.0"
+description = "Inspect AI evals comparing simple-system-prompt defenses against Llama Guard on the FGC adversarial dataset."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "inspect-ai>=0.3.0",
+    "together>=2.8.0",
+    "python-dotenv>=1.2.2",
+    "jailbreakbench>=1.0.0",
+    "tqdm>=4.67.3",
+    "litellm==1.20.0",
+    "setuptools<82.0.0",
+    "dotenv>=0.9.9",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.2.0",
+    "ruff>=0.15.11",
+]
+[tool.uv]
+constraint-dependencies = [
+    "litellm==1.20.0"
+]
