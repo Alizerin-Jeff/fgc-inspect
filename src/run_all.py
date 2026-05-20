@@ -8,15 +8,15 @@ from tasks import fgc_inspect
 
 MODEL = "together/meta-llama/Llama-3.3-70B-Instruct-Turbo"
 VARIANTS = ["none", "constitutional", "minimal", "verbose"]
-CRITIQUES = [False, True]
-LIMIT = None
+FILTER = [False, True]
+LIMIT = 50
 
-for critique in CRITIQUES:
+for filter in FILTER:
     for variant in VARIANTS:
-        print(f"\n=== variant={variant}  critique={critique} ===")
+        print(f"\n=== variant={variant}  filter={filter} ===")
         try:
             result = eval(
-                fgc_inspect(variant=variant, critique=critique),
+                fgc_inspect(variant=variant, filter=filter),
                 model=MODEL,
                 log_dir="logs/smoke" if LIMIT else "logs",
                 limit=LIMIT,

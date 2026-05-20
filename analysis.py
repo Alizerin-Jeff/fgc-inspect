@@ -3,10 +3,10 @@
 Loads every successful .eval log from logs/, groups samples by population
 (attack vs benign) and by attack algorithm, and prints three tables:
 
-  1. Headline accuracy: variant × critique × {attacks, benign, all}
-  2. Per-attack-algorithm accuracy (critique=False only — critique adds
+  1. Headline accuracy: variant × filter × {attacks, benign, all}
+  2. Per-attack-algorithm accuracy (filter=False only — filter adds
      noise on top of the variant effect, so cleaner without it).
-  3. Over-refusal vs attack-defense trade-off (critique=False only).
+  3. Over-refusal vs attack-defense trade-off (filter=False only).
 
 Run from the experiment root:
 
@@ -27,7 +27,7 @@ VARIANTS = ["none", "minimal", "constitutional", "verbose"]
 
 
 def load_runs() -> dict[tuple[str, bool], Any]:
-    """Return {(variant, critique): latest_successful_log}."""
+    """Return {(variant, filter): latest_successful_log}."""
     runs: dict[tuple[str, bool], Any] = {}
     for info in list_eval_logs(LOG_DIR):
         log = read_eval_log(info.name)
@@ -37,7 +37,7 @@ def load_runs() -> dict[tuple[str, bool], Any]:
         variant = args.get("variant")
         if variant is None:
             continue
-        key = (variant, bool(args.get("critique", False)))
+        key = (variant, bool(args.get("filter", False)))
         # Keep the most recent log per config — handles resumes / reruns.
         if key not in runs or log.eval.created > runs[key].eval.created:
             runs[key] = log
@@ -82,19 +82,19 @@ def by_algorithm(log) -> dict[str, float]:
 
 
 def print_headline(runs):
-    print("\n=== Accuracy: variant × critique × population ===\n")
-    header = f"{'variant':<16}{'critique':<10}{'attacks':>10}{'benign':>10}{'all':>10}"
+    print("\n=== Accuracy: variant × filter × population ===\n")
+    header = f"{'variant':<16}{'filter':<10}{'attacks':>10}{'benign':>10}{'all':>10}"
     print(header)
     print("-" * len(header))
     for variant in VARIANTS:
-        for critique in (False, True):
-            log = runs.get((variant, critique))
+        for filter in (False, True):
+            log = runs.get((variant, filter))
             if log is None:
-                print(f"{variant:<16}{str(critique):<10}{'--':>10}{'--':>10}{'--':>10}")
+                print(f"{variant:<16}{str(filter):<10}{'--':>10}{'--':>10}{'--':>10}")
                 continue
             s = by_population(log)
             print(
-                f"{variant:<16}{str(critique):<10}"
+                f"{variant:<16}{str(filter):<10}"
                 f"{s.get('attack', float('nan')):>10.3f}"
                 f"{s.get('benign', float('nan')):>10.3f}"
                 f"{s.get('all', float('nan')):>10.3f}"
@@ -102,7 +102,7 @@ def print_headline(runs):
 
 
 def print_by_algorithm(runs):
-    print("\n=== Attack-defense accuracy by algorithm (critique=False) ===\n")
+    print("\n=== Attack-defense accuracy by algorithm (filter=False) ===\n")
     algos: set[str] = set()
     for variant in VARIANTS:
         log = runs.get((variant, False))
@@ -127,7 +127,7 @@ def print_by_algorithm(runs):
 
 
 def print_tradeoff(runs):
-    print("\n=== Attack-defense vs over-refusal (critique=False) ===\n")
+    print("\n=== Attack-defense vs over-refusal (filter=False) ===\n")
     header = f"{'variant':<16}{'attack_defense':>16}{'over_refusal':>16}"
     print(header)
     print("-" * len(header))
