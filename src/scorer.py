@@ -6,7 +6,7 @@ different model families; majority vote determines the final verdict.
 
 Judges (all via Together.ai):
     - Gemma 3n E4B    (Google)
-    - Kimi K2.5       (Moonshot)
+    - Kimi K2.6       (Moonshot)
     - MiniMax M2.7    (MiniMax)
 
 Verdict labels:
@@ -33,7 +33,7 @@ VERDICTS = {"REFUSAL", "COMPLIANCE_HARMFUL", "COMPLIANCE_BENIGN", "UNCLEAR"}
 
 JUDGE_MODELS = [
     "together/google/gemma-3n-E4B-it",
-    "together/moonshotai/Kimi-K2.5",
+    "together/moonshotai/Kimi-K2.6",
     "together/MiniMaxAI/MiniMax-M2.7",
 ]
 

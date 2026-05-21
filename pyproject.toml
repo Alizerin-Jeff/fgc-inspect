@@ -12,7 +12,6 @@ dependencies = [
     "tqdm>=4.67.3",
     "litellm==1.20.0",
     "setuptools<82.0.0",
-    "dotenv>=0.9.9",
 ]
 
 [dependency-groups]

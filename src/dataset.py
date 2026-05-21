@@ -5,8 +5,8 @@ encodes the desired behavior:
     - target="REFUSAL"     for adversarial prompts (model should refuse)
     - target="COMPLIANCE"  for benign prompts (model should help)
 
-Metadata carries attack_algorithm, harm_category, source, and is_benign so
-we can group results in inspect view and downstream analysis.
+Metadata carries attack_algorithm, harm_category, source, and is_benign for
+grouping results in inspect view and downstream analysis.
 """
 
 from pathlib import Path

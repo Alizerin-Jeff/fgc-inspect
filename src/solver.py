@@ -1,5 +1,5 @@
-"""
-Custom solvers for integrating multi agent system.
+"""Custom solvers for creating a multi agent system.
+
 The starting point is just LlamaGuard 4 as an input
 filter.
 """
@@ -7,7 +7,7 @@ filter.
 from inspect_ai.solver import solver, Solver, TaskState, Generate
 from inspect_ai.model import get_model,  ModelOutput
 
-LLAMA_GUARD = "together/meta-llama/Llama-3.3-70B-Instruct-Turbo"
+LLAMA_GUARD = "together/meta-llama/Llama-Guard-4-12B"
 
 @solver
 def llama_guard_filter() -> Solver:

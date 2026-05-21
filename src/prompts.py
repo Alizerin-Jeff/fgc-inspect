@@ -1,8 +1,7 @@
 """System prompt variants under test.
 
 Each variant represents a qualitatively different safety intervention,
-not just a length variation. Keep them short enough that token cost
-across 682 prompts stays trivial.
+not just a length variation. 
 
 Variants:
     none           - empty string. Solver skips system_message() entirely.

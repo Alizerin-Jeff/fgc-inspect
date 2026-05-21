@@ -3,12 +3,11 @@
 Loads every successful .eval log from logs/, groups samples by population
 (attack vs benign) and by attack algorithm, and prints three tables:
 
-  1. Headline accuracy: variant × filter × {attacks, benign, all}
-  2. Per-attack-algorithm accuracy (filter=False only — filter adds
-     noise on top of the variant effect, so cleaner without it).
-  3. Over-refusal vs attack-defense trade-off (filter=False only).
+  1. Headline accuracy: variant x filter x {attacks, benign, all}
+  2. Per-attack-algorithm accuracy 
+  3. Over-refusal vs attack-defense trade-off.  
 
-Run from the experiment root:
+Run from the src dir:
 
     uv run python analysis.py
 """
@@ -82,7 +81,7 @@ def by_algorithm(log) -> dict[str, float]:
 
 
 def print_headline(runs):
-    print("\n=== Accuracy: variant × filter × population ===\n")
+    print("\n=== Accuracy: variant x filter x population ===\n")
     header = f"{'variant':<16}{'filter':<10}{'attacks':>10}{'benign':>10}{'all':>10}"
     print(header)
     print("-" * len(header))
@@ -102,43 +101,48 @@ def print_headline(runs):
 
 
 def print_by_algorithm(runs):
-    print("\n=== Attack-defense accuracy by algorithm (filter=False) ===\n")
+    print("\n=== Attack-defense accuracy by algorithm ===\n")
     algos: set[str] = set()
     for variant in VARIANTS:
         log = runs.get((variant, False))
+        if log is not None:
+            algos.update(by_algorithm(log).keys())
+        log = runs.get((variant, True))
         if log is not None:
             algos.update(by_algorithm(log).keys())
     algo_list = sorted(algos)
     # Per-column width: at least 14, or enough to fit the label + 2 padding.
     widths = {a: max(14, len(a) + 2) for a in algo_list}
 
-    header = f"{'variant':<16}" + "".join(f"{a:>{widths[a]}}" for a in algo_list)
+    header = f"{'variant':<24}" + "".join(f"{a:>{widths[a]}}" for a in algo_list)
     print(header)
     print("-" * len(header))
     for variant in VARIANTS:
-        log = runs.get((variant, False))
-        if log is None:
-            continue
-        s = by_algorithm(log)
-        row = f"{variant:<16}" + "".join(
-            f"{s.get(a, float('nan')):>{widths[a]}.3f}" for a in algo_list
-        )
-        print(row)
+        for is_filter in [False, True]:
+            log = runs.get((variant, is_filter))
+            if log is None:
+                continue
+            s = by_algorithm(log)
+            row = f"{variant + ' ' + 'w/Filter' if is_filter else variant:<24}" + "".join(
+                f"{s.get(a, float('nan')):>{widths[a]}.3f}" for a in algo_list
+            )
+            print(row)
 
 
 def print_tradeoff(runs):
-    print("\n=== Attack-defense vs over-refusal (filter=False) ===\n")
-    header = f"{'variant':<16}{'attack_defense':>16}{'over_refusal':>16}"
+    print("\n=== Attack-defense vs over-refusal ===\n")
+    header = f"{'variant':<24}{'attack_defense':>16}{'over_refusal':>16}"
     print(header)
     print("-" * len(header))
     for variant in VARIANTS:
-        log = runs.get((variant, False))
-        if log is None:
-            continue
-        s = by_population(log)
-        attack = s.get("attack", float("nan"))
-        benign = s.get("benign", float("nan"))
-        print(f"{variant:<16}{attack:>16.3f}{(1 - benign):>16.3f}")
+        for is_filter in [False, True]:
+            log = runs.get((variant, is_filter))
+            if log is None:
+                continue
+            s = by_population(log)
+            attack = s.get("attack", float("nan"))
+            benign = s.get("benign", float("nan"))
+            print(f"{variant + ' ' + 'w/Filter' if is_filter else variant:<24}{attack:>16.3f}{(1 - benign):>16.3f}")
 
 
 def main():
